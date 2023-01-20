@@ -7,3 +7,12 @@
   output: "Drive-by compromise detected: process (pid=%proc.pid) - %proc.cmdline"
   priority: WARNING
   tags: [mitre_initial_access, DS0015]
+
+# This rule will triggers when a file is opened and the file name contains "http" and the directory is "/tmp/" and the file name ends with ".exe". 
+# The above conditions ensure we are accurately indicating that is file is likely downloaded from a website and potentially malicious.
+
+- rule: Detect Drive-by File Creation
+  desc: Detects when a new file is created on the system as a result of a drive-by compromise
+  condition: evt.type=open and fd.name contains "http" and fd.directory contains "/tmp/" and fd.name ends_with ".exe"
+  output: "Drive-by file creation detected: file=%fd.name directory=%fd.directory"
+  priority: WARNING  
