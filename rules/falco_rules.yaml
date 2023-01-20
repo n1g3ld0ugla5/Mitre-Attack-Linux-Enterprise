@@ -1,0 +1,9 @@
+# This rule checks for the execution of a process named "chrome" and checks if the file descriptor (fd) name contains the string "log". 
+# If both conditions are met, it triggers the output message "Drive-by compromise detected: process (pid=%proc.pid) - %proc.cmdline" 
+
+- rule: Detect Drive-by Compromise
+  desc: Detects when a process writes to an application log file, indicating a possible drive-by compromise.
+  condition: evt.type = execve and proc.name = chrome and fd.name contains "log"
+  output: "Drive-by compromise detected: process (pid=%proc.pid) - %proc.cmdline"
+  priority: WARNING
+  tags: [mitre_initial_access, DS0015]
