@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>YAML File Reader</title>
+</head>
+<body>
+  <div>
+    <input type="text" id="search" placeholder="Search for a rule">
+    <button onclick="searchRule()">Search</button>
+  </div>
+  <div id="content"></div>
+  <div id="description"></div>
+  <script>
+    fetch("https://raw.githubusercontent.com/n1g3ld0ugla5/Mitre-Attack-Linux-Enterprise/main/rules/falco_rules.yaml")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("content").innerHTML = "<pre>" + data + "</pre>";
+      });
+
+    function searchRule() {
+      let input = document.getElementById("search").value;
+      let rules = document.getElementById("content").innerText;
+      let lines = rules.split("\n");
+      let filteredRules = [];
+      let inRule = false;
+
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].includes(input)) {
+          inRule = true;
+        }
+        if (inRule) {
+          filteredRules.push(lines[i]);
+        }
+        if (lines[i] === "") {
+          inRule = false;
+        }
+      }
+
+      document.getElementById("content").innerHTML = "<pre>" + filteredRules.join("\n") + "</pre>";
+      let description = "Rule not found.";
+      for (let i = 0; i < filteredRules.length; i++) {
+        if (filteredRules[i].startsWith("desc:")) {
+          description = filteredRules[i].substring(6);
+          break;
+        }
+      }
+      document.getElementById("description").innerHTML = "<pre>" + description + "</pre>";
+    }
+  </script>
+</body>
+</html>
