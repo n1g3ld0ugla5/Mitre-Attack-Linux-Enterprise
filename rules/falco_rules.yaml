@@ -37,6 +37,14 @@
   output: "Suspicious network traffic content detected: process=%proc.name content=%evt.buffer"
   priority: WARNING
   tags: [mitre_initial_access, DS0029]
+
+# This rule triggers when a new process is created with the commands "wget" / "curl" / "python" with argument "-c", which may indicate malicious activity.
+# These command line arguments could be used in legitimate ways as well, so it's important to verify the context of the process creation 
+# We will fine-tune this rule for a hypthetical business scenario before taking any action based on this rule.
   
-  
-  
+- rule: Detect Suspicious Process Creation
+  desc: Detects when a new process is created with unusual or suspicious arguments, indicating a potential attack
+  condition: evt.type=execve and (evt.argv[0] contains "wget" or evt.argv[0] contains "curl" or evt.argv[0] contains "python" and evt.argv[1] contains "-c")
+  output: "Suspicious process creation detected: process=%proc.name arguments=%evt.argv"
+  priority: WARNING
+  tags: [mitre_initial_access, DS0009]
