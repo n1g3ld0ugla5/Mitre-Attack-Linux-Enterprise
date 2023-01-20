@@ -15,7 +15,8 @@
   desc: Detects when a new file is created on the system as a result of a drive-by compromise
   condition: evt.type=open and fd.name contains "http" and fd.directory contains "/tmp/" and fd.name ends_with ".exe"
   output: "Drive-by file creation detected: file=%fd.name directory=%fd.directory"
-  priority: WARNING  
+  priority: WARNING
+  tags: [mitre_initial_access, DS0022]  
 
 # This rule triggers when a new network connection is created and the file name contains "http" and the directory is "/tmp/" 
 # Or event direction is incoming and the socket family is AF_INET. Indicates it's likely initiated by downloaded file from website & potentially malicious.
@@ -25,3 +26,17 @@
   condition: (evt.type=connect and fd.name contains "http" and fd.directory contains "/tmp/") or (evt.type=connect and evt.dir=< and fd.sockfamily=AF_INET)
   output: "Drive-by network connection detected: process=%proc.name connection=%fd.name"
   priority: WARNING
+  tags: [mitre_initial_access, DS0029] 
+
+# This rule triggers when network traffic contains strings like "cmd.exe","powershell.exe","wget" or "curl" which may indicate a malicious activity. 
+# It does not violate any community rules as it is based on network traffic content, not on specific IPs or domains.
+
+- rule: Detect Suspicious Network Traffic Content
+  desc: Detects when network traffic contains suspicious content, indicating a potential attack
+  condition: evt.type=sendto and (evt.buffer contains "cmd.exe" or evt.buffer contains "powershell.exe" or evt.buffer contains "wget" or evt.buffer contains "curl")
+  output: "Suspicious network traffic content detected: process=%proc.name content=%evt.buffer"
+  priority: WARNING
+  tags: [mitre_initial_access, DS0029]
+  
+  
+  
