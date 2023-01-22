@@ -9,8 +9,9 @@
     .boolean { color: #0086b3; }
     .null { color: #0086b3; }
     .key { color: #f00; }
-    body {background-color: black;
-          color: white;}
+    .comment{color:#fff;}
+    body { background-color: black;
+                      color: green; }
   </style>
   <script>
     function highlightYAML(text) {
@@ -19,6 +20,7 @@
       text = text.replace(/(true|false)/g, '<span class="boolean">$1</span>');
       text = text.replace(/null/g, '<span class="null">null</span>');
       text = text.replace(/^([a-z_]+:)/gm, '<span class="key">$1</span>');
+      text = text.replace(/(#.*)$/gm, '<span class="comment">$1</span>');
       return text;
     }
     fetch("https://raw.githubusercontent.com/n1g3ld0ugla5/Mitre-Attack-Linux-Enterprise/main/rules/falco_rules.yaml")
@@ -26,6 +28,7 @@
       .then(data => {
         document.getElementById("content").innerHTML = "<pre>" + highlightYAML(data) + "</pre>";
       });
+
 function searchRule() {
   let input = document.getElementById("search").value;
   let rules = document.getElementById("content").innerText;
@@ -46,6 +49,7 @@ function searchRule() {
   }
   document.getElementById("content").innerHTML = "<pre>" + highlightYAML(filteredRules.join("\n")) + "</pre>";
 }
+
 
   </script>
 </head>
